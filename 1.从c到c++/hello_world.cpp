@@ -6,6 +6,6 @@ int main(){
     int n;
     cin>>n;
     cout<<n<<endl;
-    printf("hell world!!");
+    printf("hello world!!");
     return 0;
 };
