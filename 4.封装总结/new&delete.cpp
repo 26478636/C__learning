@@ -30,7 +30,7 @@ int main(){
     // A* a1=new A();
     // delete a1;
 
-    A* a2=new(arr) A();
+    A* a2=new(arr) A();//不需要额外开辟内存空间、释放内存空间
     A* a3=new(arr+sizeof(A)) A();
     return 0;
 }
