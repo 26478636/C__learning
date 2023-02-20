@@ -27,8 +27,8 @@ public:
 
 char arr[100];
 int main(){
-    A* a1=new A();
-    delete a1;
+    // A* a1=new A();
+    // delete a1;
 
     A* a2=new(arr) A();
     A* a3=new(arr+sizeof(A)) A();
