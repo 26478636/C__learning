@@ -2,13 +2,13 @@
 using namespace std;
 
 //重载new
-void* operator new(size_t size){
+void* operator new(size_t size){//操作符重载 size 开辟内存空间的大小
     cout<<"创建内存空间"<<endl;
     void* p=malloc(size);
     return p;
 }
 //重载delete
-void operator delete(void* p){
+void operator delete(void* p){//操作符重载 
     cout<<"删除内存空间"<<endl;
     if(p){
         free(p);
