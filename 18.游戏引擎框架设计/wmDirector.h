@@ -3,7 +3,7 @@
 
 #include "wmDefine.h" // 引入一些宏定义
 #include <vector>
-#include <sys/time.h>
+#include <sys/time.h> // 系统函数 为了计算时间
 
 using namespace std;
 
@@ -18,12 +18,13 @@ class wmDirector
 {
 
 private:
-    // 场景
-    vector<wmScene *> _scenes;
-    wmScene *_runningScene;
-    wmScene *_nextScene;
-
+    // 导演的一些属性
     // 丢到内存释放池，做内存的自动释放
+    // 场景
+    vector<wmScene *> _scenes; // 一些场景
+    wmScene *_runningScene;    // 当前场景
+    wmScene *_nextScene;       // 下一场景
+
     // 绘制图形 渲染器
     wmRender *_render;
     // 调度器
@@ -33,16 +34,16 @@ private:
 
     // 帧率
     float _fps;          // 帧率
-    float _deltaTime;    // 时间增量，两帧之间的时间
+    float _deltaTime;    // 时间增量，两帧之间的时间；假设帧率为60，超过1/60秒，调用drawScene()来绘制场景
     timeval _lastUpdeta; // timeval为一个结构体，为了便捷计算时间
     bool _paused;        // 判断场景是否停止
 
 public:
-    // 导演真正可以做的工作
+    // 导演实现的主逻辑
     // 切换场景
     void runScene(wmScene *scene); // 正在执行的场景
     // 切换方式分为两种：1）replace形式  2）push形式
-    void replaceScene(wmScene *scene); // 下一帧所替代的场景
+    void replaceScene(wmScene *scene); // 被下一帧所替代的场景
     void pushScene(wmScene *scene);    // 推送进场景
     void popScene(wmScene *scene);     // 从场景中弹出的
 
@@ -56,7 +57,7 @@ public:
     void mainLoop();           // 主循环
     void drawScene();          // 绘制场景
     void setNextScene();       // 判断下一个场景是否有值，如果有值做自动切换
-    bool calculateDeltatime(); // 判断时间是否溢出，比如一秒，如果溢出，推送图片进去
+    bool calculateDeltatime(); // 计算两帧之间的时间 超过1/60秒，渲染下一帧
 
 public:
     // 创建静态方法  实例化导演的身份

@@ -20,6 +20,7 @@ wmDirector *wmDirector::instance()
 }
 
 // 一些个默认初始化
+// 设置帧率为60
 wmDirector::wmDirector() : _runningScene(nullptr),
                            _nextScene(nullptr),
                            _fps(60),
