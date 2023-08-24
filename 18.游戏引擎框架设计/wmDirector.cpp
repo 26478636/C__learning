@@ -51,10 +51,10 @@ void wmDirector::popScene(wmScene *scene) {}     // 从场景中弹出的
 void wmDirector::start()
 {
     // 开始启动
-    _paused = false; // 更新
-    _deltaTime = 0;  // 更新
-    gettimeofday(&_lastUpdeta, nullptr);
-    this->mainLoop(); // 紧接着进入主循环
+    _paused = false;                     // 更新
+    _deltaTime = 0;                      // 更新
+    gettimeofday(&_lastUpdeta, nullptr); // 初始化一下_lastUpdate
+    this->mainLoop();                    // 紧接着进入主循环
 }
 void wmDirector::pause()
 {
@@ -77,8 +77,8 @@ void wmDirector::mainLoop()
     while (true)
     {
         if (calculateDeltatime())
-        { // 控制帧率 在帧率范围内
-            // 在一帧范围内，绘制图像
+        { // 控制帧率 1/60
+            // 超过一帧范围，绘制图像
             drawScene();
         }
         else
@@ -87,7 +87,7 @@ void wmDirector::mainLoop()
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
-} // 主循环
+}
 
 void wmDirector::drawScene()
 {
@@ -96,6 +96,7 @@ void wmDirector::drawScene()
         return;
     }
 
+    // 场景切换
     setNextScene();
 
     // 处理调度scheduler
@@ -104,7 +105,7 @@ void wmDirector::drawScene()
     if (_runningScene)
     {
         // 进行渲染
-        // _runningScene->render(_render);
+        // _runningScene->wmrender(_wmrender);
     }
 
     // 内存自动释放
@@ -113,9 +114,10 @@ void wmDirector::drawScene()
     WMBLOG("----------drawScene-----deltaTime=%f\n----------", _deltaTime);
 
 } // 绘制场景
+
 void wmDirector::setNextScene() {}
 
-// 判断是否溢出一帧
+// 计算两帧之间的时间
 bool wmDirector::calculateDeltatime()
 {
     timeval now; // 目前的时间
@@ -123,9 +125,10 @@ bool wmDirector::calculateDeltatime()
     // gettimeofday() 得到一个准确时间
     if (gettimeofday(&now, nullptr) != 0)
     {
-        return;
+        return false;
     }
 
+    // 计算时间差
     float elapsed = now.tv_sec - _lastUpdeta.tv_sec + (now.tv_usec - _lastUpdeta.tv_usec) / 1000000.0;
     // 判断时间是否溢出
     if (elapsed >= 1.0f / _fps)

@@ -1,17 +1,30 @@
-#ifndef _WM_Node_HE_
-#define _WM_Node_HE_
+#ifndef _WM_NODE_H_
+#define _WM_NODE_H_
 
 #include "wmDefine.h"
-#include <string>
-#include <vector>
 #include <functional>
 #include <algorithm>
+#include <string>
+#include <vector>
+
 NS_WM_BEGIN
 
 class wmRender;
+// 是scene的基类
 class wmNode
 {
     friend class wmRender;
+
+protected:
+    // 不想被外界访问的
+    // 成员属性
+    std::string _name; // 待渲染界面的名字
+    int _tag;          // id 地址
+    bool _visible;     // 是否可见
+    int _Zotder;       // z坐标
+    float _x, _y;
+    bool _pause;             // 如果不在场景树中，那么不对其进行渲染
+    bool _reorderChildDirty; // 是否对该场景树做排序
 
 public:
     // wmNode *create()
@@ -33,7 +46,6 @@ public:
     virtual void removechile(const std::string &name);                // 删除子节点
     virtual void removechile(int tag);                                // 删除子节点
 
-public:
     virtual void visit(wmRender *render); // 遍历
     virtual void draw(wmRender *render);  // 绘制
     virtual void update(float dt);        // 更新调度
@@ -52,16 +64,6 @@ protected:
         static_assert(std::is_base_of<wmNode, _T>::value, "不知所云")
             std::sort(std::begin(nodes), std::end(nodes), [](_T *n1, _T *n2)
                       { return n1->ZOrder < n2->ZOrder; })}
-
-    // 不想被外界访问的
-    // 待渲染的界面
-    std::string _name;
-    int _tag;      // id 地址
-    bool _visible; // 是否可见
-    int _Zotder;   // z坐标
-    float _x, _y;
-    bool _pause;             // 如果不在场景树中，那么不对其进行渲染
-    bool _reorderChildDirty; // 是否对该场景树做排序
 
     // 待渲染界面的存储
     std::vector<wmNode *> _children;

@@ -25,11 +25,13 @@ private:
     wmScene *_runningScene;    // 当前场景
     wmScene *_nextScene;       // 下一场景
 
-    // 绘制图形 渲染器
+    // 绘制图形
+    // 渲染器
     wmRender *_render;
     // 调度器
     wmScheduler *_scheduler;
     // 自动内存释放
+    // 在每一帧的时候，做update调度
     wmAutoreleasePool *_releasepool;
 
     // 帧率
