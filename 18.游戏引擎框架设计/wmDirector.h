@@ -9,6 +9,7 @@ using namespace std;
 
 NS_WM_BEGIN
 
+// 各种前置声明
 class wmScene; // 场景类
 class wmRender;
 class wmScheduler;
@@ -71,6 +72,8 @@ public:
     ~wmDirector();
     // 创建助手，创建场景，维护场景队列等...
     bool init();
+
+    wmScheduler *getScheduler() { return _scheduler; }
 };
 
 NS_WM_END

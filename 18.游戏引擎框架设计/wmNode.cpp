@@ -1,12 +1,16 @@
 #include "wmNode.h"
+#include "wmRender.h"
+#include "wmDirector.h"
 #include <algorithm>
 
 USING_NS_WM;
 
 // 初始化
-wmNode::wmNode() : _name(""), _tag(0), _visible(true), _Zotder(0), _x(0), _y(0), _pause(false), _reorderChildDirty(false), _parent(nullptr)
+wmNode::wmNode()
+    : _name(""), _tag(0), _visible(true), _Zotder(0), _x(0), _y(0), _pause(false), _reorderChildDirty(false), _parent(nullptr)
 {
 }
+
 wmNode::~wmNode() {}
 
 // 各种函数的实现
@@ -14,6 +18,7 @@ void wmNode::onEnter()
 {
     for (auto child : _children)
     {
+        // 子节点也需要onEnter操作
         child->onEnter();
     }
 }
@@ -50,12 +55,12 @@ void wmNode::removeChild(wmNode *child)
 
 void wmNode::removechile(const std::string &name)
 {
-    for (auto iter = _children.begin(); iter != _children.end(); iter++)
+    for (auto it = _children.begin(); it != _children.end(); it++)
     {
         // 利用string 进行判断
-        if ((*iter)->_name.compare(name) == 0)
+        if ((*it)->_name.compare(name) == 0)
         {
-            _children.erase(iter);
+            it = _children.erase(it);
             // break;
         }
     }
@@ -63,17 +68,29 @@ void wmNode::removechile(const std::string &name)
 
 void wmNode::removechile(int tag)
 {
-    for (auto iter = _children.begin(); iter != _children.end(); iter++)
+    for (auto it = _children.begin(); it != _children.end(); it++)
     {
         // 利用id进行判断
-        if ((*iter)->_tag == tag)
+        if ((*it)->_tag == tag)
         {
-            _children.erase(iter);
+            it = _children.erase(it);
             // break;
         }
     }
 }
 
+// 排序
+void wmNode::sortAllChildren()
+{
+    // 需要重排的话
+    if (_reorderChildDirty)
+    {
+        sortNodes(_children);       // 进行排序
+        _reorderChildDirty = false; // 排完之后，返回false
+    }
+}
+
+// visit 实现遍历操作
 void wmNode::visit(wmRender *wmrender)
 {
     // 中序遍历
@@ -87,9 +104,12 @@ void wmNode::visit(wmRender *wmrender)
         // 开始中序遍历了
         // 首先需要排序
         sortAllChildren();
-        int i = 0;
+        int i = 0; // 子节点
         for (; i < _children.size(); i++)
         {
+            // 渲染，从负数，到正数
+            // 左子树
+            // at()访问vector容器的下标
             auto node = _children.at(i);
             if (node && node->_Zotder < 0)
             {
@@ -123,3 +143,11 @@ void wmNode::draw(wmRender *wmrender)
 void wmNode::update(float dt)
 {
 }
+
+void wmNode::scheduleOnce(std::function<void(float)> callback)
+{
+    // 向谁申请调度
+}
+void wmNode::schedule(std::function<void(float)> callback, int repeat, float interval) {}
+void wmNode::scheduleUpdate() {}
+void wmNode::unscheduleUpdate() {}

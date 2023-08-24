@@ -1,5 +1,7 @@
 #include <thread>
 #include "wmDirector.h"
+#include "wmRender.h"
+#include "wmScheduler.h"
 
 USING_NS_WM;
 
@@ -33,6 +35,10 @@ wmDirector::~wmDirector() {}
 
 bool wmDirector::init()
 {
+    // 渲染器
+    _render = new wmRender();
+    // 调度器
+    // 回收器
     return true;
 }
 

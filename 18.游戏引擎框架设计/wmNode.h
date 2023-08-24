@@ -13,7 +13,7 @@ class wmRender;
 // 是scene的基类
 class wmNode
 {
-    friend class wmRender;
+    friend class wmRender; // 设置成友元类
 
 protected:
     // 不想被外界访问的
@@ -25,6 +25,9 @@ protected:
     float _x, _y;
     bool _pause;             // 如果不在场景树中，那么不对其进行渲染
     bool _reorderChildDirty; // 是否对该场景树做排序
+    // 待渲染界面的存储
+    std::vector<wmNode *> _children; // 子节点
+    wmNode *_parent;                 // 父节点
 
 public:
     // wmNode *create()
@@ -33,24 +36,26 @@ public:
     //     // 把this存入自动回收池进行管理
     // }
 
+    // 新增接口，可以注册Scheduler
     virtual void scheduleOnce(std::function<void(float)> callback);
-    virtual void schedule(std::function<void(float)> callback, int repeat, float time);
+    virtual void schedule(std::function<void(float)> callback, int repeat, float interval);
     virtual void scheduleUpdate();
     virtual void unscheduleUpdate();
 
-    virtual void onEnter(); // 插入节点
-    virtual void onExit();  // 删除节点
+    // 做渲染
+    virtual void visit(wmRender *wmrender); // 遍历
+    virtual void draw(wmRender *wmrender);  // 绘制
+    virtual void update(float dt);          // 更新调度
 
-    virtual void addChild(wmNode *node, int Zorder = 0, int tag = 0); // 新增子节点
+    virtual void onEnter();                                           // 插入节点
+    virtual void onExit();                                            // 删除节点
+    virtual void addChild(wmNode *node, int zorder = 0, int tag = 0); // 新增子节点
     virtual void removeChild(wmNode *child);                          // 删除子节点
     virtual void removechile(const std::string &name);                // 删除子节点
     virtual void removechile(int tag);                                // 删除子节点
 
-    virtual void visit(wmRender *render); // 遍历
-    virtual void draw(wmRender *render);  // 绘制
-    virtual void update(float dt);        // 更新调度
-
 protected:
+    // 二次构造，同director一样
     wmNode();
     ~wmNode();
     virtual bool init() { return true; }
@@ -59,15 +64,14 @@ protected:
     // 排序，排序很重要，别忘了
     void sortAllChildren();
     template <typename _T>
-    inline static void sortNodes(std::vector<_T *> &nodes){
-        // 校验
-        static_assert(std::is_base_of<wmNode, _T>::value, "不知所云")
-            std::sort(std::begin(nodes), std::end(nodes), [](_T *n1, _T *n2)
-                      { return n1->ZOrder < n2->ZOrder; })}
-
-    // 待渲染界面的存储
-    std::vector<wmNode *> _children;
-    wmNode *_parent;
+    inline static void sortNodes(std::vector<_T *> &nodes)
+    {
+        // Zorder只有在wmNode才有，所以先要进行一次校验
+        // 校验 wmNode与_T(wmNode派生类)的类型一致
+        static_assert(std::is_base_of<wmNode, _T>::value, "wmNode::sortNodes only Accept derived of wmNode!");
+        std::sort(std::begin(nodes), std::end(nodes), [](_T *n1, _T *n2)
+                  { return n1->ZOrder < n2->ZOrder; })
+    }
 };
 
 NS_WM_END
