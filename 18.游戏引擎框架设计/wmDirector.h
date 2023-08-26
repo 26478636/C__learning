@@ -30,10 +30,10 @@ private:
     // 绘制图形
     // 渲染器
     wmRender *_render;
-    // 调度器
+    // 调度器 做逻辑处理
+    // 在每一帧的时候，做update调度
     wmScheduler *_scheduler;
     // 自动内存释放
-    // 在每一帧的时候，做update调度
     wmAutoreleasePool *_releasepool;
 
     // 帧率
