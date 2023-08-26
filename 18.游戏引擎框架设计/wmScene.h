@@ -2,8 +2,8 @@
 #define _WM_SCENE_H_
 
 // 引入一些宏定义
-#include "wmDefine.h"
 #include "wmNode.h"
+#include "wmDefine.h"
 
 NS_WM_BEGIN
 

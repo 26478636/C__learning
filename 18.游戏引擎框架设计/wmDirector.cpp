@@ -1,13 +1,13 @@
 #include <thread>
-#include "wmDirector.h"
 #include "wmRender.h"
+#include "wmDirector.h"
 #include "wmScheduler.h"
 
 USING_NS_WM;
 
 // 创建一个实例化的导演
+// ------------------------------------------------------------------------------------------------
 wmDirector *_instance = nullptr;
-
 // 实现静态函数功能，相当于初始化的过程，得到一个导演对象
 wmDirector *wmDirector::instance()
 {
@@ -20,8 +20,10 @@ wmDirector *wmDirector::instance()
         return _instance;
     }
 }
+// ------------------------------------------------------------------------------------------------
 
-// 一些个默认初始化
+// 构造函数  &&  析构函数  &&  init()函数
+// ------------------------------------------------------------------------------------------------
 // 设置帧率为60
 wmDirector::wmDirector() : _runningScene(nullptr),
                            _nextScene(nullptr),
@@ -30,9 +32,10 @@ wmDirector::wmDirector() : _runningScene(nullptr),
                            _paused(false)
 {
 }
-
-wmDirector::~wmDirector() {}
-
+wmDirector::~wmDirector()
+{
+    // 释放不放在这里
+}
 bool wmDirector::init()
 {
     // 渲染器
@@ -41,15 +44,16 @@ bool wmDirector::init()
     // 回收器
     return true;
 }
-// -----------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 
-// 实现一些函数的具体功能
+// 导演实现的主逻辑
+// ------------------------------------------------------------------------------------------------
+// 切换场景
 void wmDirector::runScene(wmScene *scene)
 {
     // 从此时开始渲染场景
     this->start();
 } // 正在执行的场景
-
 void wmDirector::replaceScene(wmScene *scene) {} // 下一帧所替代的场景
 void wmDirector::pushScene(wmScene *scene) {}    // 推送进场景
 void wmDirector::popScene(wmScene *scene) {}     // 从场景中弹出的
@@ -74,7 +78,6 @@ void wmDirector::resume()
 {
     _paused = false;
 } // 恢复
-
 void wmDirector::restart() {}
 
 // 场景运行逻辑
@@ -95,46 +98,39 @@ void wmDirector::mainLoop()
         }
     }
 }
-
 void wmDirector::drawScene()
 {
     if (_paused)
-    {
         return;
-    }
 
-    // 场景切换
+    // 1.先要场景切换
     setNextScene();
 
-    // 处理调度scheduler
-    // 在这进行update出发
+    // 2.处理调度scheduler
+    // 在这进行update
 
-    // 绘制scene
+    // 3.绘制scene
+    // 判断_runningScene当前是否有值
     if (_runningScene)
     {
         // 进行渲染
         // _runningScene->wmrender(_wmrender);
     }
 
-    // 内存自动释放
+    // 4.内存自动释放
 
     // 这里我们需要，有一个打印日志
     WMBLOG("----------drawScene-----deltaTime=%f\n----------", _deltaTime);
-
-} // 绘制场景
-
+}
 void wmDirector::setNextScene() {}
-
 // 计算两帧之间的时间
 bool wmDirector::calculateDeltatime()
 {
     timeval now; // 目前的时间
 
-    // gettimeofday() 得到一个准确时间
+    // gettimeofday() 取到当前的一个时间
     if (gettimeofday(&now, nullptr) != 0)
-    {
         return false;
-    }
 
     // 计算时间差
     float elapsed = now.tv_sec - _lastUpdeta.tv_sec + (now.tv_usec - _lastUpdeta.tv_usec) / 1000000.0;
@@ -142,8 +138,9 @@ bool wmDirector::calculateDeltatime()
     if (elapsed >= 1.0f / _fps)
     {
         _lastUpdeta = now;
-        _deltaTime = elapsed;
+        _deltaTime = elapsed; // 把每帧之间的时间间隔显示出来
         return true;
     }
     return false;
 }
+// ------------------------------------------------------------------------------------------------
