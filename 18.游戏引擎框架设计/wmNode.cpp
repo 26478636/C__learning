@@ -1,6 +1,7 @@
 #include "wmNode.h"
 #include "wmRender.h"
 #include "wmDirector.h"
+#include "wmScheduler.h"
 #include <algorithm>
 
 USING_NS_WM;
@@ -146,8 +147,12 @@ void wmNode::update(float dt)
 
 void wmNode::scheduleOnce(std::function<void(float)> callback)
 {
-    // 向谁申请调度
+    // 向谁申请调度 当然是向导演类申请方法了
+    wmDirector::instance()->getScheduler();
 }
-void wmNode::schedule(std::function<void(float)> callback, int repeat, float interval) {}
+void wmNode::schedule(std::function<void(float)> callback, int repeat, float interval)
+{
+    // 获取调度
+}
 void wmNode::scheduleUpdate() {}
 void wmNode::unscheduleUpdate() {}

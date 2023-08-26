@@ -37,9 +37,9 @@ public:
     // }
 
     // 新增接口，可以注册Scheduler
-    virtual void scheduleOnce(std::function<void(float)> callback);
-    virtual void schedule(std::function<void(float)> callback, int repeat, float interval);
-    virtual void scheduleUpdate();
+    virtual void scheduleOnce(std::function<void(float)> callback);                         // 重复一次
+    virtual void schedule(std::function<void(float)> callback, int repeat, float interval); // 重复N次
+    virtual void scheduleUpdate();                                                          // 每帧更新
     virtual void unscheduleUpdate();
 
     // 做渲染
@@ -47,8 +47,9 @@ public:
     virtual void draw(wmRender *wmrender);  // 绘制
     virtual void update(float dt);          // 更新调度
 
-    virtual void onEnter();                                           // 插入节点
-    virtual void onExit();                                            // 删除节点
+    virtual void onEnter(); // 把节点插入到场景时，进行此操作
+    virtual void onExit();  // 把节点从场景删除时，进行此操作
+
     virtual void addChild(wmNode *node, int zorder = 0, int tag = 0); // 新增子节点
     virtual void removeChild(wmNode *child);                          // 删除子节点
     virtual void removechile(const std::string &name);                // 删除子节点

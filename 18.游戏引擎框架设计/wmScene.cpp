@@ -14,7 +14,9 @@ void wmScene::onExit()
     wmScene::onExit();
 }
 
-void wmScene::update(float da)
+// 希望每一帧，都调度update方法
+// 调度update方法，需要的导演类中进行触发的
+void wmScene::update(float dt)
 {
 }
 

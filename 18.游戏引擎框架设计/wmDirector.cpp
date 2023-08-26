@@ -8,7 +8,7 @@ USING_NS_WM;
 // 创建一个实例化的导演
 wmDirector *_instance = nullptr;
 
-// 实现静态函数功能
+// 实现静态函数功能，相当于初始化的过程，得到一个导演对象
 wmDirector *wmDirector::instance()
 {
     // 实例化导演身份
@@ -41,6 +41,7 @@ bool wmDirector::init()
     // 回收器
     return true;
 }
+// -----------------------------------------------------------------------------------------------------
 
 // 实现一些函数的具体功能
 void wmDirector::runScene(wmScene *scene)
@@ -106,6 +107,7 @@ void wmDirector::drawScene()
     setNextScene();
 
     // 处理调度scheduler
+    // 在这进行update出发
 
     // 绘制scene
     if (_runningScene)

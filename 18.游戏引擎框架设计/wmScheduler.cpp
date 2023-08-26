@@ -21,11 +21,14 @@ wmScheduler::~wmScheduler()
     }
 }
 
+// dt 调度时间
 void wmScheduler::update(float dt)
 {
+    // 三种情况
     // 每一帧去更新的
     for (auto entry : _updateMap)
     {
+        // 如果，不暂停执行
         if (!entry.second->paused)
         {
             entry.second->callback(dt);
@@ -50,18 +53,20 @@ void wmScheduler::update(float dt)
         auto entry = *it;
         if (!entry.second->paused)
         {
+            // 时间到了，我们去做调度
             entry.second->time -= dt;
             if (entry.second->time <= 0.0f)
             {
                 entry.second->time = entry.second->interval;
                 entry.second->callback(dt);
+
                 if (entry.second->repeat != -1)
                 {
                     entry.second->repeat--;
                     if (entry.second->repeat == 0)
                     {
                         auto p = it->second;
-                        it = _repeatMap.erase(it);
+                        _repeatMap.erase(it); // it = _repeatMap.erase(it);
                         delete p;
                         isFix = true;
                     }
@@ -73,9 +78,19 @@ void wmScheduler::update(float dt)
     }
 }
 
-void wmScheduler::scheduler(std::function<void(float)> callback,
-                            float interval, unsigned int repeat, void *target, bool paused = false)
+void wmScheduler::schedule(std::function<void(float)> callback,
+                           float interval, unsigned int repeat, void *target, bool paused = false)
 {
+    _TimerEntry *entry = new _TimerEntry{
+        target, callback, paused, repeat, 0, interval};
+    if (repeat = 0)
+    {
+        _timerMap[target] = entry;
+    }
+    else
+    {
+        _repeatMap[target] = entry;
+    }
 }
 
 void wmScheduler::schedulePerFrame(const std::function<void(float)> &callback, void *target, bool paused)
@@ -89,6 +104,7 @@ void wmScheduler::unschedulerUpdate(void *target)
     if (it != _updateMap.end())
     {
         delete it->second;
+        _updateMap.erase(it);
     }
 }
 

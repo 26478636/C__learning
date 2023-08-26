@@ -20,6 +20,7 @@ class wmDirector
 
 private:
     // 导演的一些属性
+    // ----------------------------------------------------------------------------------------------
     // 丢到内存释放池，做内存的自动释放
     // 场景
     vector<wmScene *> _scenes; // 一些场景
@@ -40,11 +41,13 @@ private:
     float _deltaTime;    // 时间增量，两帧之间的时间；假设帧率为60，超过1/60秒，调用drawScene()来绘制场景
     timeval _lastUpdeta; // timeval为一个结构体，为了便捷计算时间
     bool _paused;        // 判断场景是否停止
+    // ---------------------------------------------------------------------------------------------
 
 public:
     // 导演实现的主逻辑
+    // ------------------------------------------------------------------------------------------------
     // 切换场景
-    void runScene(wmScene *scene); // 正在执行的场景
+    void runScene(wmScene *scene); // 场景创建出来，并作显示
     // 切换方式分为两种：1）replace形式  2）push形式
     void replaceScene(wmScene *scene); // 被下一帧所替代的场景
     void pushScene(wmScene *scene);    // 推送进场景
@@ -61,18 +64,20 @@ public:
     void drawScene();          // 绘制场景
     void setNextScene();       // 判断下一个场景是否有值，如果有值做自动切换
     bool calculateDeltatime(); // 计算两帧之间的时间 超过1/60秒，渲染下一帧
+    // -----------------------------------------------------------------------------------------------
 
 public:
     // 创建静态方法  实例化导演的身份
     static wmDirector *instance();
 
     // 为什么两次构造函数，为了避免失败
-    // 开辟内存空间
+    // 开辟内存空间，这一部分不去做太过复杂的逻辑
     wmDirector();
     ~wmDirector();
-    // 创建助手，创建场景，维护场景队列等...
+    // 创建助手，创建场景，维护调度队列等...
     bool init();
 
+    // 向导演类申请调度的方法
     wmScheduler *getScheduler() { return _scheduler; }
 };
 
