@@ -114,6 +114,7 @@ void wmDirector::drawScene()
     if (_runningScene)
     {
         // 进行渲染
+        // 在这里，Scene调用的是render方法，所以Scene类中，需要包括render方法
         // _runningScene->wmrender(_wmrender);
     }
 

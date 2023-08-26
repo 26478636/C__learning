@@ -16,6 +16,17 @@ wmNode::~wmNode() {}
 // ------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------
+// 遍历之前需要现做排序
+// 排序
+void wmNode::sortAllChildren()
+{
+    // 判断是否需要重排
+    if (_reorderChildDirty)
+    {
+        sortNodes(_children);       // 进行排序
+        _reorderChildDirty = false; // 排完之后，返回false
+    }
+}
 // 做渲染
 void wmNode::visit(wmRender *wmrender)
 {
@@ -127,17 +138,6 @@ void wmNode::removechile(int tag)
     }
 }
 // ------------------------------------------------------------------------------------------------
-
-// 排序
-void wmNode::sortAllChildren()
-{
-    // 需要重排的话
-    if (_reorderChildDirty)
-    {
-        sortNodes(_children);       // 进行排序
-        _reorderChildDirty = false; // 排完之后，返回false
-    }
-}
 
 void wmNode::scheduleOnce(std::function<void(float)> callback)
 {

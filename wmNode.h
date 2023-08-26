@@ -72,12 +72,12 @@ protected:
     virtual bool init() { return true; }
 
     // 排序，排序很重要，别忘了
-    // 设计成模板函数类型
+    // 设计成模板函数类型，模板函数必须要出现在头文件里
     void sortAllChildren();
     template <typename _T>
     inline static void sortNodes(std::vector<_T *> &nodes)
     {
-        // Zorder只有在wmNode才有，所以先要进行一次校验
+        // zorder只有在wmNode才有，所以先要进行一次校验
         // 校验 wmNode与_T(wmNode派生类)的类型一致
         static_assert(std::is_base_of<wmNode, _T>::value, "wmNode::sortNodes only Accept derived of wmNode!");
         std::sort(std::begin(nodes), std::end(nodes), [](_T *n1, _T *n2)
