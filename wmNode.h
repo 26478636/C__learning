@@ -9,7 +9,7 @@
 
 NS_WM_BEGIN
 
-// wmNode是树形结构的基类
+// *****wmNode是树形结构的基类*****
 
 class wmRender; // 渲染器
 class wmNode
@@ -24,7 +24,7 @@ protected:
     std::string _name; // Node名字
     int _tag;          // id 地址
     bool _visible;     // 是否可见
-    int _zotder;       // z坐标
+    int _zorder;       // z坐标
     float _x, _y;
     bool _pause;                     // 如果该Node不在场景树中，那么不对其进行渲染
     bool _reorderChildDirty;         // 是否对该场景树做重排
@@ -71,17 +71,17 @@ protected:
     ~wmNode();
     virtual bool init() { return true; }
 
-    // 排序，排序很重要，别忘了
+    // visit()遍历之前，需要先做排列，排列是根据_zorder的大小来排列
     // 设计成模板函数类型，模板函数必须要出现在头文件里
     void sortAllChildren();
     template <typename _T>
     inline static void sortNodes(std::vector<_T *> &nodes)
     {
-        // zorder只有在wmNode才有，所以先要进行一次校验
-        // 校验 wmNode与_T(wmNode派生类)的类型一致
+        // _zorder只有在wmNode才有，所以可以先进行一次校验
+        // 校验wmNode与_T(wmNode派生类)的类型是否一致
         static_assert(std::is_base_of<wmNode, _T>::value, "wmNode::sortNodes only Accept derived of wmNode!");
         std::sort(std::begin(nodes), std::end(nodes), [](_T *n1, _T *n2)
-                  { return n1->ZOrder < n2->ZOrder; })
+                  { return n1->_zorder < n2->_zorder; })
     }
     // ------------------------------------------------------------------------------------------------
 };

@@ -9,7 +9,7 @@ USING_NS_WM;
 // ------------------------------------------------------------------------------------------------
 // 构造函数  &&  析构函数
 wmNode::wmNode()
-    : _name(""), _tag(0), _visible(true), _zotder(0), _x(0), _y(0), _pause(false), _reorderChildDirty(false), _parent(nullptr)
+    : _name(""), _tag(0), _visible(true), _zorder(0), _x(0), _y(0), _pause(false), _reorderChildDirty(false), _parent(nullptr)
 {
 }
 wmNode::~wmNode() {}
@@ -45,18 +45,16 @@ void wmNode::visit(wmRender *wmrender)
         for (; i < _children.size(); i++)
         {
             // 渲染，从负数，到正数
-            // 左子树
+            // 渲染左子树
             // at()访问vector容器的下标
             auto node = _children.at(i);
-            if (node && node->_zotder < 0)
+            if (node && node->_zorder < 0)
             {
                 // 开始遍历
                 node->visit(wmrender);
             }
             else
-            {
                 break;
-            }
         }
         // 渲染自己啦
         this->draw(wmrender);
@@ -98,7 +96,7 @@ void wmNode::addChild(wmNode *node, int zorder = 0, int tag = 0)
     // 增加插图，更改画面
     node->_parent = this;
     _children.push_back(node);
-    node->_zotder = zorder;
+    node->_zorder = zorder;
     node->_tag = tag;
     _reorderChildDirty = true;
 }
