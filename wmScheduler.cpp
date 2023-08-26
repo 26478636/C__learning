@@ -3,8 +3,9 @@
 
 NS_WM_BEGIN
 
+// ------------------------------------------------------------------------------------------------
+// 构造函数  &&  析构函数
 wmScheduler::wmScheduler() {}
-
 wmScheduler::~wmScheduler()
 {
     for (auto entry : _updateMap)
@@ -20,34 +21,39 @@ wmScheduler::~wmScheduler()
         delete entry.second;
     }
 }
+// ------------------------------------------------------------------------------------------------
 
-// dt 调度时间
+// ------------------------------------------------------------------------------------------------
+// update()函数     dt为调度时间
 void wmScheduler::update(float dt)
 {
     // 三种情况
-    // 每一帧去更新的
+    // 每一帧去更新的  遍历每帧都要去调度的对象
     for (auto entry : _updateMap)
     {
         // 如果，不暂停执行
         if (!entry.second->paused)
         {
+            // 调用callback()函数
             entry.second->callback(dt);
         }
     }
 
-    // 重复一次
+    // 重复一次  遍历重复调度一次的对象
     for (auto entry : _timerMap)
     {
         if (!entry.second->paused)
         {
             entry.second->callback(dt);
         }
+        // 做好内存的释放
         delete entry.second;
     }
     _timerMap.clear();
 
-    // 重复N次
-    bool isFix = false;
+    // 重复N次  遍历重复调度N次的对象
+    bool isFix = false; // 标记位，判断是否repeatN次
+    // 这里没有it++很巧妙
     for (auto it = _repeatMap.begin(); it != _repeatMap.end();)
     {
         auto entry = *it;
@@ -59,7 +65,6 @@ void wmScheduler::update(float dt)
             {
                 entry.second->time = entry.second->interval;
                 entry.second->callback(dt);
-
                 if (entry.second->repeat != -1)
                 {
                     entry.second->repeat--;
@@ -73,11 +78,14 @@ void wmScheduler::update(float dt)
                 }
             }
         }
-        if (!isFix)
-            ++it;
+        if (isFix)
+            ++it; // *****这里老师的逻辑，应该是写错了*****
     }
 }
+// ------------------------------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------------
+// schedule()函数
 void wmScheduler::schedule(std::function<void(float)> callback,
                            float interval, unsigned int repeat, void *target, bool paused = false)
 {
@@ -92,7 +100,9 @@ void wmScheduler::schedule(std::function<void(float)> callback,
         _repeatMap[target] = entry;
     }
 }
+// ------------------------------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------------
 void wmScheduler::schedulePerFrame(const std::function<void(float)> &callback, void *target, bool paused)
 {
     _UpdateEntry *entry = new _UpdateEntry{
@@ -107,5 +117,6 @@ void wmScheduler::unschedulerUpdate(void *target)
         _updateMap.erase(it);
     }
 }
+// ------------------------------------------------------------------------------------------------
 
 NS_WM_END
