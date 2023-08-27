@@ -9,6 +9,7 @@ NS_WM_BEGIN
 
 class wmScene : public wmNode
 {
+public:
     // ------------------------------------------------------------------------------------------------
     void onEnter() override;                 // 有点像开关那个意思
     void onExit() override;                  // 有点像开关那个意思

@@ -1,4 +1,5 @@
 #include <thread>
+#include "wmScene.h"
 #include "wmRender.h"
 #include "wmDirector.h"
 #include "wmScheduler.h"
@@ -34,14 +35,19 @@ wmDirector::wmDirector() : _runningScene(nullptr),
 }
 wmDirector::~wmDirector()
 {
-    // 释放不放在这里
+    delete _render;
+    delete _scheduler;
+    delete _releasepool;
 }
 bool wmDirector::init()
 {
+    // 渲染器、调度器、回收器都要在init()函数中，做初始化
     // 渲染器
     _render = new wmRender();
     // 调度器
+    _scheduler = new wmScheduler();
     // 回收器
+
     return true;
 }
 // ------------------------------------------------------------------------------------------------
@@ -108,14 +114,15 @@ void wmDirector::drawScene()
 
     // 2.处理调度scheduler
     // 在这进行update
+    _scheduler->update(_deltaTime);
 
     // 3.绘制scene
     // 判断_runningScene当前是否有值
     if (_runningScene)
     {
-        // 进行渲染
+        // 渲染当前的场景
         // 在这里，Scene调用的是render方法，所以Scene类中，需要包括render方法
-        // _runningScene->wmrender(_wmrender);
+        _runningScene->render(_render);
     }
 
     // 4.内存自动释放

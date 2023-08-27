@@ -7,7 +7,6 @@
 
 NS_WM_BEGIN
 
-// ------------------------------------------------------------------------------------------------
 // 两类可调度对象
 // 每帧一调度
 struct _UpdateEntry
@@ -49,35 +48,44 @@ public:
 
     // ------------------------------------------------------------------------------------------------
     // ***模板方法一定要实现在头文件里***
+    // 重复调度一次
     template <class T>
-    // 重复一次
     void scheduleOnce(T *target, std::function<void(float)> callback, bool paused = false)
     {
         this->schedule(callback, 0.0f, 0, target, paused);
     }
-
+    // 重复调度N次
     template <class T>
     void schedule(T *target, std::function<void(float)> callback,
                   float interval, unsigned int repeat, bool paused = false)
     {
         this->schedule(callback, interval, repeat, target, paused);
     }
-
+    // 普通的调度器
     void schedule(std::function<void(float)> callback,
                   float interval, unsigned int repeat, void *target, bool paused = false);
 
+    // ------------------------------------------------------------------------------------------------
+
+    // ------------------------------------------------------------------------------------------------
     template <class T>
     // 每一帧去调用
     void scheduleUpdate(T *target, bool paused)
     {
         this->schedulePerFrame([target](float dt)
-                               { target->update(dt); },
+                               {
+                                // 相当于调用，target中的update()方法 
+                                target->update(dt); },
                                target, paused);
     }
-    // ------------------------------------------------------------------------------------------------
-
+    // 该函数，专门做每一帧的回调
     void schedulePerFrame(const std::function<void(float)> &callback, void *target, bool paused);
     void unschedulerUpdate(void *target);
+    // ------------------------------------------------------------------------------------------------
+
+    // 构造函数  &&  析构函数
+    wmScheduler();
+    ~wmScheduler();
 };
 
 NS_WM_END

@@ -7,11 +7,13 @@ void wmScene::onEnter()
 {
     // 调用基类的 onEnter()
     wmNode::onEnter();
+    this->scheduleUpdate();
 }
 void wmScene::onExit()
 {
     // 调用基类的 onExit()
     wmScene::onExit();
+    this->scheduleUpdate();
 }
 // 希望每一帧，都调度update方法
 // 调度update方法，需要的导演类中进行触发的

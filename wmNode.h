@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "wmDefine.h"
+#include "wmDirector.h"
 
 NS_WM_BEGIN
 
@@ -42,7 +43,8 @@ public:
     // ------------------------------------------------------------------------------------------------
 
     // ------------------------------------------------------------------------------------------------
-    // 新增接口，可以注册Scheduler
+    // wmNode类中，**新增接口**，为了可以注册Scheduler
+    // 在该节点处，可以知道，该节点是什么调度
     virtual void scheduleOnce(std::function<void(float)> callback);                         // 重复一次
     virtual void schedule(std::function<void(float)> callback, int repeat, float interval); // 重复N次
     virtual void scheduleUpdate();                                                          // 每帧更新
@@ -65,8 +67,8 @@ public:
     // ------------------------------------------------------------------------------------------------
 
 protected:
-    // 二次构造，同director一样
     // ------------------------------------------------------------------------------------------------
+    // 二次构造，同director一样wmNode();
     wmNode();
     ~wmNode();
     virtual bool init() { return true; }
@@ -81,7 +83,7 @@ protected:
         // 校验wmNode与_T(wmNode派生类)的类型是否一致
         static_assert(std::is_base_of<wmNode, _T>::value, "wmNode::sortNodes only Accept derived of wmNode!");
         std::sort(std::begin(nodes), std::end(nodes), [](_T *n1, _T *n2)
-                  { return n1->_zorder < n2->_zorder; })
+                  { return n1->_zorder < n2->_zorder; });
     }
     // ------------------------------------------------------------------------------------------------
 };

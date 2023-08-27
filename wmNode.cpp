@@ -9,7 +9,15 @@ USING_NS_WM;
 // ------------------------------------------------------------------------------------------------
 // 构造函数  &&  析构函数
 wmNode::wmNode()
-    : _name(""), _tag(0), _visible(true), _zorder(0), _x(0), _y(0), _pause(false), _reorderChildDirty(false), _parent(nullptr)
+    : _name(""),
+      _tag(0),
+      _visible(true),
+      _zorder(0),
+      _x(0),
+      _y(0),
+      _pause(false),
+      _reorderChildDirty(false),
+      _parent(nullptr)
 {
 }
 wmNode::~wmNode() {}
@@ -91,7 +99,7 @@ void wmNode::onExit()
         child->onExit();
     }
 }
-void wmNode::addChild(wmNode *node, int zorder = 0, int tag = 0)
+void wmNode::addChild(wmNode *node, int zorder, int tag)
 {
     // 增加插图，更改画面
     node->_parent = this;
@@ -137,14 +145,30 @@ void wmNode::removechile(int tag)
 }
 // ------------------------------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------------
+// 重复调度1次
 void wmNode::scheduleOnce(std::function<void(float)> callback)
 {
     // 向谁申请调度 当然是向导演类申请方法了
-    wmDirector::instance()->getScheduler();
+    // 向导演类申请调度了
+    wmDirector::instance()->getScheduler()->scheduleOnce(this, [callback](float dt)
+                                                         { callback(dt); });
 }
+// 重复调度N次
 void wmNode::schedule(std::function<void(float)> callback, int repeat, float interval)
 {
     // 获取调度
+    wmDirector::instance()->getScheduler()->schedule(
+        this, [callback](float dt)
+        { callback(dt); },
+        interval, repeat, false);
 }
-void wmNode::scheduleUpdate() {}
-void wmNode::unscheduleUpdate() {}
+void wmNode::scheduleUpdate()
+{
+    wmDirector::instance()->getScheduler()->scheduleUpdate(this, _pause);
+}
+void wmNode::unscheduleUpdate()
+{
+    wmDirector::instance()->getScheduler()->unschedulerUpdate(this);
+}
+// ------------------------------------------------------------------------------------------------

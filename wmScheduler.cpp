@@ -8,6 +8,7 @@ NS_WM_BEGIN
 wmScheduler::wmScheduler() {}
 wmScheduler::~wmScheduler()
 {
+    // 需要将三个map清空掉
     for (auto entry : _updateMap)
     {
         delete entry.second;
@@ -85,18 +86,20 @@ void wmScheduler::update(float dt)
 // ------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------
-// schedule()函数
+// schedule()函数 调度器
 void wmScheduler::schedule(std::function<void(float)> callback,
-                           float interval, unsigned int repeat, void *target, bool paused = false)
+                           float interval, unsigned int repeat, void *target, bool paused)
 {
     _TimerEntry *entry = new _TimerEntry{
         target, callback, paused, repeat, 0, interval};
     if (repeat = 0)
     {
+        // 重复一次
         _timerMap[target] = entry;
     }
     else
     {
+        // 重复N次
         _repeatMap[target] = entry;
     }
 }
@@ -105,6 +108,7 @@ void wmScheduler::schedule(std::function<void(float)> callback,
 // ------------------------------------------------------------------------------------------------
 void wmScheduler::schedulePerFrame(const std::function<void(float)> &callback, void *target, bool paused)
 {
+    // 构造一个对象
     _UpdateEntry *entry = new _UpdateEntry{
         target, callback, paused};
 }
@@ -113,6 +117,7 @@ void wmScheduler::unschedulerUpdate(void *target)
     auto it = _updateMap.find(target);
     if (it != _updateMap.end())
     {
+        // 内存释放
         delete it->second;
         _updateMap.erase(it);
     }
