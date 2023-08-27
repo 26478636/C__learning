@@ -1,5 +1,5 @@
-#ifndef _WM_HEADER_
-#define _WM_HEADER_
+#ifndef _WM_HEADER_H_
+#define _WM_HEADER_H_
 // 一些宏定义
 
 #include <cstdio>

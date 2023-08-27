@@ -13,6 +13,7 @@ NS_WM_BEGIN
 // *****wmNode是树形结构的基类*****
 
 class wmRender; // 渲染器
+
 class wmNode
 {
 

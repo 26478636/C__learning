@@ -6,8 +6,8 @@
 
 USING_NS_WM;
 
-// 创建一个实例化的导演
 // ------------------------------------------------------------------------------------------------
+// 创建一个实例化的导演
 wmDirector *_instance = nullptr;
 // 实现静态函数功能，相当于初始化的过程，得到一个导演对象
 wmDirector *wmDirector::instance()
@@ -23,9 +23,8 @@ wmDirector *wmDirector::instance()
 }
 // ------------------------------------------------------------------------------------------------
 
-// 构造函数  &&  析构函数  &&  init()函数
 // ------------------------------------------------------------------------------------------------
-// 设置帧率为60
+// 构造函数  &&  析构函数  &&  init()函数  &&  设置帧率为60
 wmDirector::wmDirector() : _runningScene(nullptr),
                            _nextScene(nullptr),
                            _fps(60),
@@ -35,13 +34,14 @@ wmDirector::wmDirector() : _runningScene(nullptr),
 }
 wmDirector::~wmDirector()
 {
+    // 一定要做，内存的自动释放
     delete _render;
     delete _scheduler;
     delete _releasepool;
 }
 bool wmDirector::init()
 {
-    // 渲染器、调度器、回收器都要在init()函数中，做初始化
+    // 渲染器、调度器、回收器都要在init()函数中，进行初始化
     // 渲染器
     _render = new wmRender();
     // 调度器
@@ -52,8 +52,9 @@ bool wmDirector::init()
 }
 // ------------------------------------------------------------------------------------------------
 
-// 导演实现的主逻辑
 // ------------------------------------------------------------------------------------------------
+// 导演实现的主逻辑
+
 // 切换场景
 void wmDirector::runScene(wmScene *scene)
 {
@@ -70,7 +71,7 @@ void wmDirector::start()
     // 开始启动
     _paused = false;                     // 更新
     _deltaTime = 0;                      // 更新
-    gettimeofday(&_lastUpdeta, nullptr); // 初始化一下_lastUpdate
+    gettimeofday(&_lastUpdeta, nullptr); // 更新一下_lastUpdate
     this->mainLoop();                    // 紧接着进入主循环
 }
 void wmDirector::pause()
@@ -83,7 +84,7 @@ void wmDirector::pause()
 void wmDirector::resume()
 {
     _paused = false;
-} // 恢复
+} // 恢复之前的状态
 void wmDirector::restart() {}
 
 // 场景运行逻辑
@@ -108,6 +109,8 @@ void wmDirector::drawScene()
 {
     if (_paused)
         return;
+
+    // 先做场景切换  然后做调度处理  最后要绘制场景
 
     // 1.先要场景切换
     setNextScene();
