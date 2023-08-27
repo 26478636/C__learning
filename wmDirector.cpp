@@ -24,10 +24,10 @@ wmDirector *wmDirector::instance()
 // ------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------
-// 构造函数  &&  析构函数  &&  init()函数  &&  设置帧率为60
+// 构造函数  &&  析构函数  &&  init()函数  &&  设置帧率为1
 wmDirector::wmDirector() : _runningScene(nullptr),
                            _nextScene(nullptr),
-                           _fps(60),
+                           _fps(1),
                            _deltaTime(0),
                            _paused(false)
 {
@@ -59,6 +59,8 @@ bool wmDirector::init()
 void wmDirector::runScene(wmScene *scene)
 {
     // 从此时开始渲染场景
+    _scenes.push_back(scene); // push_back进场景vector中
+    _nextScene = scene;       // 设置下一个场景，也是scene
     this->start();
 } // 正在执行的场景
 void wmDirector::replaceScene(wmScene *scene) {} // 下一帧所替代的场景
@@ -133,7 +135,19 @@ void wmDirector::drawScene()
     // 这里我们需要，有一个打印日志
     WMBLOG("----------drawScene-----deltaTime=%f\n----------", _deltaTime);
 }
-void wmDirector::setNextScene() {}
+void wmDirector::setNextScene()
+{
+    if (_nextScene)
+    {
+        if (_runningScene)
+        {
+            _runningScene->onExit();
+        }
+        _runningScene = _nextScene;
+        _nextScene = nullptr;
+        _runningScene->onEnter();
+    }
+}
 // 计算两帧之间的时间
 bool wmDirector::calculateDeltatime()
 {
