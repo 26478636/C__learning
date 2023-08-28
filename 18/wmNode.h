@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include "wmRef.h"
 #include "wmDefine.h"
 #include "wmDirector.h"
 
@@ -14,7 +15,7 @@ NS_WM_BEGIN
 
 class wmRender; // 渲染器
 
-class wmNode
+class wmNode : public wmRef
 {
 
     friend class wmRender; // 将渲染器设置成友元类
@@ -37,12 +38,24 @@ protected:
 public:
     // 为了设置名字
     inline void setName(std::string name) { _name = name; }
+    void pause();
+    void resume();
 
     // ------------------------------------------------------------------------------------------------
+    // 定义宏
+    CREATE(wmNode);
+
     // wmNode *create()
     // {
     //     // 做内存管理
     //     // 把this存入自动回收池进行管理
+    //     wmNode *node = new wmNode();
+    //     if (node->init())
+    //     {
+    //         node->autorelease();
+    //         return node;
+    //     }
+    //     return nullptr;
     // }
     // ------------------------------------------------------------------------------------------------
 

@@ -19,8 +19,12 @@ wmNode::wmNode()
       _reorderChildDirty(false),
       _parent(nullptr)
 {
+    WMBLOG("==========wmNdoe-----constructor %p!\n", this);
 }
-wmNode::~wmNode() {}
+wmNode::~wmNode()
+{
+    WMBLOG("==========wmNdoe-----destructor %p!\n", this);
+}
 // ------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------
@@ -86,6 +90,8 @@ void wmNode::update(float dt)
 }
 void wmNode::onEnter()
 {
+    // 新场景把老场景盖住之后，老场景就不应该再调用update()方法，之前的node暂停
+    _pause = true;
     for (auto child : _children)
     {
         // 子节点也需要onEnter操作
@@ -94,6 +100,7 @@ void wmNode::onEnter()
 }
 void wmNode::onExit()
 {
+    _pause = true;
     for (auto child : _children)
     {
         child->onExit();

@@ -81,6 +81,15 @@ public:
     // 该函数，专门做每一帧的回调
     void schedulePerFrame(const std::function<void(float)> &callback, void *target, bool paused);
     void unschedulerUpdate(void *target);
+
+    template<class T>
+    void pause(T* node){
+        // _updateMap[node]
+    }
+    template<class T>
+    void resume(T* node){
+        
+    }
     // ------------------------------------------------------------------------------------------------
 
     // 构造函数  &&  析构函数

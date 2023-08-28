@@ -3,6 +3,7 @@
 #include "wmRender.h"
 #include "wmDirector.h"
 #include "wmScheduler.h"
+#include "wmAutoreleasePool.h"
 
 USING_NS_WM;
 
@@ -47,6 +48,7 @@ bool wmDirector::init()
     // 调度器
     _scheduler = new wmScheduler();
     // 回收器
+    _releasepool = new wmAutoreleasePool();
 
     return true;
 }
@@ -63,9 +65,28 @@ void wmDirector::runScene(wmScene *scene)
     _nextScene = scene;       // 设置下一个场景，也是scene
     this->start();
 } // 正在执行的场景
-void wmDirector::replaceScene(wmScene *scene) {} // 下一帧所替代的场景
-void wmDirector::pushScene(wmScene *scene) {}    // 推送进场景
-void wmDirector::popScene(wmScene *scene) {}     // 从场景中弹出的
+void wmDirector::replaceScene(wmScene *scene)
+{
+    if (_scenes.size() > 0)
+    {
+        _scenes.pop_back();
+    }
+    _scenes.push_back(scene);
+    _nextScene = scene;
+} // 下一帧所替代的场景
+void wmDirector::pushScene(wmScene *scene)
+{
+    _scenes.push_back(scene);
+    _nextScene = scene;
+} // 推送进场景
+void wmDirector::popScene(wmScene *scene)
+{
+    if (_scenes.size() > 1)
+    {
+        _scenes.pop_back();
+        _nextScene = _scenes.back();
+    }
+} // 从场景中弹出的
 
 // 场景状态控制
 void wmDirector::start()
@@ -131,6 +152,7 @@ void wmDirector::drawScene()
     }
 
     // 4.内存自动释放
+    _releasePool->clear();
 
     // 这里我们需要，有一个打印日志
     WMBLOG("----------drawScene-----deltaTime=%f\n----------", _deltaTime);

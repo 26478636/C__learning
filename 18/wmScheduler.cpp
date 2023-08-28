@@ -122,6 +122,7 @@ void wmScheduler::unschedulerUpdate(void *target)
         _updateMap.erase(it);
     }
 }
+
 // ------------------------------------------------------------------------------------------------
 
 NS_WM_END

@@ -28,12 +28,14 @@ private:
     wmScene *_nextScene;       // 下一场景
 
     // 绘制图形
-    // 渲染器
+    // 渲染器  只实现了打印日志
     wmRender *_render;
     // 调度器 做逻辑处理
     // 在每一帧的时候，做update调度......
+    // 在一个场景中，如何让一个对象从A点移动到B点：在每一帧对它的坐标进行修改
+    // 即：对wmNode中的update()进行修改  然后，丢给_scheduler(调度器)，_scheduler会调用update()方法
     wmScheduler *_scheduler;
-    // 自动内存释放
+    // 内存的自动释放
     wmAutoreleasePool *_releasepool;
 
     // 帧率
@@ -80,6 +82,7 @@ public:
     // ------------------------------------------------------------------------------------------------
     // *****因为调度是导演类管理的，所以向导演类申请调度的方法*****
     wmScheduler *getScheduler() { return _scheduler; }
+    wmAutoreleasePool *getAutorelease() { return _releasepool; }
     // ------------------------------------------------------------------------------------------------
 };
 
