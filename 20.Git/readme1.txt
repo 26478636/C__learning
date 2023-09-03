@@ -23,3 +23,5 @@ git push origin <分支名>
 // 1 首先切换到，想要合并的分支上 这里是master分支
 // 2 git merge feature-git
 // 3 删除分支 git branch -d <分支名> 这里需要切换到master分支之后，在做删除
+// 如果发生，分支冲突怎么解决
+
