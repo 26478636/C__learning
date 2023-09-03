@@ -18,5 +18,7 @@ git commit -m ""
 git push origin <分支名>
 // git pull --rebase origin <分支名>
 // git push origin <分支名>
-这里想要合并到主干，这时就要切换到master分支
 
+这是，分支上的功能已经实现了，并且测试完成了，我们想要提交到master分支上
+// 1 首先切换到，想要合并的分支上 这里是master分支
+// 2 git merge feature-git
